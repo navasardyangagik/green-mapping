@@ -55,8 +55,13 @@ export default function MapPage() {
   }) => {
     if (!user) return
 
+    console.log("[v0] Submitting form data:", data)
+
     try {
       const token = localStorage.getItem("token")
+      console.log("[v0] Token:", token ? "present" : "missing")
+
+      console.log("[v0] Making POST request to /api/dead-plants")
       const response = await fetch("/api/dead-plants", {
         method: "POST",
         headers: {
@@ -66,8 +71,12 @@ export default function MapPage() {
         body: JSON.stringify(data),
       })
 
+      console.log("[v0] Response status:", response.status)
+      console.log("[v0] Response ok:", response.ok)
+
       if (response.ok) {
         const result = await response.json()
+        console.log("[v0] Success result:", result)
         // Add the new dead plant to the map immediately
         setNewDeadPlants((prev) => [
           ...prev,
@@ -84,10 +93,11 @@ export default function MapPage() {
         setSelectedCoordinates(undefined)
       } else {
         const error = await response.json()
+        console.log("[v0] Error response:", error)
         alert(error.message || "Failed to add dead plant matter")
       }
     } catch (error) {
-      console.error("Error adding dead plant:", error)
+      console.error("[v0] Error adding dead plant:", error)
       alert("Failed to add dead plant matter")
     }
   }
