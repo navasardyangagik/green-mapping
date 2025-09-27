@@ -83,8 +83,9 @@ export async function GET() {
   console.log("[v0] GET /api/dead-plants endpoint hit")
 
   try {
+    console.log("[v0] Attempting to fetch dead plants...")
     const deadPlants = await getAllDeadPlants()
-    console.log("[v0] Retrieved dead plants:", deadPlants.length)
+    console.log("[v0] Successfully retrieved", deadPlants.length, "dead plants")
 
     return NextResponse.json({
       deadPlants: deadPlants.map((plant) => ({
@@ -99,6 +100,12 @@ export async function GET() {
     })
   } catch (error) {
     console.error("[v0] Dead plants fetch error:", error)
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      {
+        message: "Failed to fetch dead plants",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    )
   }
 }

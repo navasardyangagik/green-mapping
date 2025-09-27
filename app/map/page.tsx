@@ -29,16 +29,7 @@ export default function MapPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isMapClickMode, setIsMapClickMode] = useState(false)
   const [selectedCoordinates, setSelectedCoordinates] = useState<{ lat: number; lng: number } | undefined>()
-  const [newDeadPlants, setNewDeadPlants] = useState<
-    Array<{
-      id: string
-      latitude: number
-      longitude: number
-      type: string
-      description: string
-      condition: string
-    }>
-  >([])
+  const [refreshMap, setRefreshMap] = useState(0)
 
   const { user } = useAuth()
 
@@ -47,15 +38,15 @@ export default function MapPage() {
   }
 
   const handleFormSubmit = async (data: {
+    type: string
     latitude: number
     longitude: number
-    type: string
-    description: string
     condition: string
+    description: string
   }) => {
     if (!user) return
 
-    console.log("[v0] Submitting form data:", data)
+    console.log("[v0] Submitting dead plant data:", data)
 
     try {
       const token = localStorage.getItem("token")
@@ -77,28 +68,18 @@ export default function MapPage() {
       if (response.ok) {
         const result = await response.json()
         console.log("[v0] Success result:", result)
-        // Add the new dead plant to the map immediately
-        setNewDeadPlants((prev) => [
-          ...prev,
-          {
-            id: result.deadPlant.id,
-            latitude: result.deadPlant.latitude,
-            longitude: result.deadPlant.longitude,
-            type: result.deadPlant.type,
-            description: result.deadPlant.description,
-            condition: result.deadPlant.condition,
-          },
-        ])
+        // Trigger map refresh to show new dead plant
+        setRefreshMap((prev) => prev + 1)
         setIsMapClickMode(false)
         setSelectedCoordinates(undefined)
       } else {
         const error = await response.json()
         console.log("[v0] Error response:", error)
-        alert(error.message || "Failed to add dead plant matter")
+        alert(error.error || "Failed to add dead plant data")
       }
     } catch (error) {
       console.error("[v0] Error adding dead plant:", error)
-      alert("Failed to add dead plant matter")
+      alert("Failed to add dead plant data")
     }
   }
 
@@ -199,7 +180,7 @@ export default function MapPage() {
               filter={filter}
               onMapClick={handleMapClick}
               isClickMode={isMapClickMode}
-              newDeadPlants={newDeadPlants}
+              key={refreshMap}
             />
           </div>
 
@@ -210,7 +191,7 @@ export default function MapPage() {
                 className="bg-red-600 hover:bg-red-700 text-white shadow-lg cursor-pointer"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Report Dead Plant Matter
+                Report Dead Plant
               </Button>
             </div>
           )}

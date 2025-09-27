@@ -32,17 +32,11 @@ export function Navbar() {
 
           {/* Navigation links */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+            <a href="/map" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
               Explore Map
             </a>
             <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               About
-            </a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Research
-            </a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Community
             </a>
           </div>
 

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Leaf } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 export default function RegisterPage() {
   const [name, setName] = useState("")
@@ -20,6 +21,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,10 +51,10 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem("token", data.token)
-        router.push("/")
-        router.refresh()
+        login(data.token, data.user)
+        setTimeout(() => {
+          router.push("/")
+        }, 100)
       } else {
         setError(data.message || "Registration failed")
       }

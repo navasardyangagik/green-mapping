@@ -8,9 +8,14 @@ export async function connectToDatabase() {
     return cachedDb
   }
 
-  const client = await clientPromise
-  const db = client.db(process.env.MONGODB_DB_NAME || "nextjs-app")
+  try {
+    const client = await clientPromise
+    const db = client.db(process.env.MONGODB_DB_NAME || "plant-mapping")
 
-  cachedDb = db
-  return db
+    cachedDb = db
+    return db
+  } catch (error) {
+    console.error("[v0] Database connection error:", error)
+    throw error
+  }
 }
