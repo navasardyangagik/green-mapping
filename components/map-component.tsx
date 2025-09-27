@@ -14,11 +14,31 @@ L.Icon.Default.mergeOptions({
 
 interface MapComponentProps {
   className?: string
+  filter?: "All" | "Trees" | "Dead Matter"
+  onMapClick?: (lat: number, lng: number) => void
+  isClickMode?: boolean
+  newDeadPlants?: Array<{
+    id: string
+    latitude: number
+    longitude: number
+    type: string
+    description: string
+    condition: string
+  }>
 }
 
-export function MapComponent({ className = "" }: MapComponentProps) {
+export function MapComponent({
+  className = "",
+  filter = "All",
+  onMapClick,
+  isClickMode = false,
+  newDeadPlants = [],
+}: MapComponentProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
+  const treeMarkersRef = useRef<L.Marker[]>([])
+  const deadPlantMarkersRef = useRef<L.Marker[]>([])
+  const clickMarkerRef = useRef<L.Marker | null>(null)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -30,6 +50,55 @@ export function MapComponent({ className = "" }: MapComponentProps) {
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map)
+
+    const style = document.createElement("style")
+    style.textContent = `
+      .leaflet-popup-pane {
+        z-index: 10001 !important;
+      }
+      .leaflet-popup {
+        z-index: 10001 !important;
+      }
+      .leaflet-popup-tip-container {
+        z-index: 10001 !important;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    `
+    document.head.appendChild(style)
+
+    map.on("click", (e) => {
+      if (isClickMode && onMapClick) {
+        const { lat, lng } = e.latlng
+        onMapClick(lat, lng)
+
+        // Add temporary marker to show selected location
+        if (clickMarkerRef.current) {
+          map.removeLayer(clickMarkerRef.current)
+        }
+
+        clickMarkerRef.current = L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: "temp-marker",
+            html: `<div style="
+              background-color: #3b82f6;
+              width: 16px;
+              height: 16px;
+              border-radius: 50%;
+              border: 3px solid white;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              animation: pulse 2s infinite;
+              z-index: 10002;
+            "></div>`,
+            iconSize: [22, 22],
+            iconAnchor: [11, 11],
+          }),
+        }).addTo(map)
+      }
+    })
 
     // Add a marker for Glendale city center
     const glendaleCenterMarker = L.marker([34.1425, -118.2551])
@@ -80,17 +149,19 @@ export function MapComponent({ className = "" }: MapComponentProps) {
     ]
 
     sampleTrees.forEach((tree) => {
-      L.marker([tree.lat, tree.lng], { icon: treeIcon })
+      const marker = L.marker([tree.lat, tree.lng], { icon: treeIcon })
         .addTo(map)
         .bindPopup(`<b>${tree.name}</b><br>Healthy tree location<br><span style="color: #2f8530;">● Living Tree</span>`)
+      treeMarkersRef.current.push(marker)
     })
 
     sampleDeadPlants.forEach((plant) => {
-      L.marker([plant.lat, plant.lng], { icon: deadPlantIcon })
+      const marker = L.marker([plant.lat, plant.lng], { icon: deadPlantIcon })
         .addTo(map)
         .bindPopup(
           `<b>${plant.name}</b><br>Type: ${plant.type}<br><span style="color: #dc2626;">● Dead Plant Material</span>`,
         )
+      deadPlantMarkersRef.current.push(marker)
     })
 
     const legend = L.control({ position: "bottomright" })
@@ -113,8 +184,100 @@ export function MapComponent({ className = "" }: MapComponentProps) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null
       }
+      document.head.removeChild(style)
     }
   }, [])
+
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+
+    const map = mapInstanceRef.current
+    const container = map.getContainer()
+
+    if (isClickMode) {
+      container.style.cursor = "crosshair"
+    } else {
+      container.style.cursor = ""
+      // Remove temporary click marker when exiting click mode
+      if (clickMarkerRef.current) {
+        map.removeLayer(clickMarkerRef.current)
+        clickMarkerRef.current = null
+      }
+    }
+  }, [isClickMode])
+
+  useEffect(() => {
+    if (!mapInstanceRef.current || newDeadPlants.length === 0) return
+
+    const map = mapInstanceRef.current
+    const deadPlantIcon = L.divIcon({
+      className: "custom-dead-plant-marker",
+      html: `<div style="
+        background-color: #dc2626;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      "></div>`,
+      iconSize: [16, 16],
+      iconAnchor: [8, 8],
+    })
+
+    newDeadPlants.forEach((plant) => {
+      const marker = L.marker([plant.latitude, plant.longitude], { icon: deadPlantIcon })
+        .addTo(map)
+        .bindPopup(
+          `<b>${plant.type}</b><br>Condition: ${plant.condition}<br>Description: ${plant.description}<br><span style="color: #dc2626;">● Dead Plant Material</span>`,
+        )
+      deadPlantMarkersRef.current.push(marker)
+    })
+  }, [newDeadPlants])
+
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+
+    const map = mapInstanceRef.current
+
+    // Show/hide markers based on filter
+    if (filter === "All") {
+      // Show all markers
+      treeMarkersRef.current.forEach((marker) => {
+        if (!map.hasLayer(marker)) {
+          map.addLayer(marker)
+        }
+      })
+      deadPlantMarkersRef.current.forEach((marker) => {
+        if (!map.hasLayer(marker)) {
+          map.addLayer(marker)
+        }
+      })
+    } else if (filter === "Trees") {
+      // Show only tree markers
+      treeMarkersRef.current.forEach((marker) => {
+        if (!map.hasLayer(marker)) {
+          map.addLayer(marker)
+        }
+      })
+      deadPlantMarkersRef.current.forEach((marker) => {
+        if (map.hasLayer(marker)) {
+          map.removeLayer(marker)
+        }
+      })
+    } else if (filter === "Dead Matter") {
+      // Show only dead plant markers
+      treeMarkersRef.current.forEach((marker) => {
+        if (map.hasLayer(marker)) {
+          map.removeLayer(marker)
+        }
+      })
+      deadPlantMarkersRef.current.forEach((marker) => {
+        if (!map.hasLayer(marker)) {
+          map.addLayer(marker)
+        }
+      })
+    }
+  }, [filter])
 
   return <div ref={mapRef} className={`w-full h-full min-h-[500px] rounded-lg border border-border ${className}`} />
 }

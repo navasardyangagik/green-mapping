@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, LogOut } from "lucide-react"
+import { User, LogOut, Leaf } from "lucide-react"
 
 export function Navbar() {
   const { user, logout, isLoading } = useAuth()
@@ -22,14 +22,7 @@ export function Navbar() {
           {/* Logo and brand */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <svg className="h-5 w-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                />
-              </svg>
+              <Leaf className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
               <h1 className="text-lg font-semibold text-foreground">SoCal Trees</h1>
@@ -71,11 +64,11 @@ export function Navbar() {
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="w-4 h-4 mr-2" />
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">
+                      <User className="w-4 h-4 mr-2" /> Dashboard
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>My Trees</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-destructive">
                     <LogOut className="w-4 h-4 mr-2" />

@@ -21,7 +21,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/map">
-                <Button size="lg" className="text-base font-medium">
+                <Button size="lg" className="text-base font-medium cursor-pointer">
                   Explore the Map
                 </Button>
               </Link>
@@ -134,7 +134,7 @@ export default function Home() {
             Join our community of environmental stewards and discover the hidden stories in every tree.
           </p>
           <Link href="/map">
-            <Button size="lg" className="text-base font-medium">
+            <Button size="lg" className="text-base font-medium cursor-pointer">
               Start Exploring
             </Button>
           </Link>
