@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -19,9 +20,11 @@ export default function Home() {
               identification, environmental impact, and contribute to community conservation efforts.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-base font-medium">
-                Explore the Map
-              </Button>
+              <Link href="/map">
+                <Button size="lg" className="text-base font-medium">
+                  Explore the Map
+                </Button>
+              </Link>
               <Button variant="outline" size="lg" className="text-base font-medium bg-transparent">
                 Learn More
               </Button>
@@ -130,9 +133,11 @@ export default function Home() {
           <p className="text-lg text-muted-foreground mb-8">
             Join our community of environmental stewards and discover the hidden stories in every tree.
           </p>
-          <Button size="lg" className="text-base font-medium">
-            Start Exploring
-          </Button>
+          <Link href="/map">
+            <Button size="lg" className="text-base font-medium">
+              Start Exploring
+            </Button>
+          </Link>
         </div>
       </section>
     </div>

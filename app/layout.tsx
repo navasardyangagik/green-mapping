@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Roboto } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { AuthProvider } from "@/lib/auth-context"
 import "./globals.css"
 
 const roboto = Roboto({
@@ -25,7 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${roboto.variable} antialiased`}>
-        <Suspense fallback={null}>{children}</Suspense>
+        <AuthProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
