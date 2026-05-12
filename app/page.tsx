@@ -1,145 +1,150 @@
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Activity, ArrowRight, Leaf, MapPin, Sprout, TreePine } from "lucide-react"
 import Link from "next/link"
+
+const stats = [
+  { value: "2,847", label: "Trees mapped" },
+  { value: "156", label: "Species identified" },
+  { value: "42.3k", label: "lbs CO2 tracked" },
+]
+
+const features = [
+  {
+    icon: TreePine,
+    title: "Living tree inventory",
+    description: "Track location, species, and condition with a map that is built for field checks.",
+  },
+  {
+    icon: Activity,
+    title: "Health and impact",
+    description: "Surface plant condition and carbon contribution without burying useful details.",
+  },
+  {
+    icon: Sprout,
+    title: "Community reports",
+    description: "Signed-in users can report dead plant material directly from the map.",
+  },
+]
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 text-balance">
-              Discover the greenery of <span className="text-primary">SoCal</span>
-            </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty">
-              A comprehensive digital plant map documenting every tree and perennial shrub. Explore species
-              identification, environmental impact, and contribute to community conservation efforts.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/map">
-                <Button size="lg" className="text-base font-medium cursor-pointer">
-                  Explore the Map
+      <main>
+        <section className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+          <div className="container mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1fr_0.88fr]">
+            <div className="max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground">
+                <Leaf className="h-4 w-4 text-primary" />
+                Glendale, CA plant intelligence
+              </div>
+              <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] tracking-normal text-foreground sm:text-6xl lg:text-7xl">
+                A cleaner map for the urban canopy.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+                Explore tree locations, scan health signals, and contribute field reports without the clutter that
+                usually makes civic tools feel like homework.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button size="lg" asChild>
+                  <Link href="/map">
+                    Open map
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
-              </Link>
-              <Button variant="outline" size="lg" className="text-base font-medium bg-transparent">
-                Learn More
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">2,847</div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Trees Mapped</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">156</div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Species Identified
+                <Button variant="outline" size="lg" asChild>
+                  <Link href="#overview">View overview</Link>
+                </Button>
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">42.3k</div>
-              <div className="text-sm font-medium text-muted-foreground uppercase tracking-wide">lbs CO₂ Captured</div>
+
+            <div className="rounded-lg border border-border bg-card p-3 shadow-xl shadow-foreground/5">
+              <div className="overflow-hidden rounded-md border border-border bg-[#edf1e7]">
+                <div className="flex items-center justify-between border-b border-border bg-card/90 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">SoCal Tree Map</p>
+                    <p className="text-xs text-muted-foreground">Brand Park to Downtown Glendale</p>
+                  </div>
+                  <div className="rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">Live</div>
+                </div>
+                <div className="relative h-[360px] overflow-hidden">
+                  <div className="absolute inset-0 opacity-50 [background-image:linear-gradient(to_right,rgba(47,68,55,.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(47,68,55,.12)_1px,transparent_1px)] [background-size:44px_44px]" />
+                  <div className="absolute left-[14%] top-[18%] h-24 w-52 rotate-[-8deg] rounded-full border border-primary/20 bg-primary/10" />
+                  <div className="absolute bottom-[16%] right-[10%] h-28 w-64 rotate-[10deg] rounded-full border border-chart-2/25 bg-chart-2/10" />
+                  {[
+                    ["18%", "28%", "Oak", "bg-primary"],
+                    ["35%", "54%", "Pine", "bg-primary"],
+                    ["56%", "35%", "Palm", "bg-primary"],
+                    ["72%", "62%", "Dry shrub", "bg-destructive"],
+                    ["62%", "74%", "Maple", "bg-primary"],
+                    ["25%", "72%", "Dead bush", "bg-destructive"],
+                  ].map(([left, top, label, color]) => (
+                    <div
+                      key={`${left}-${top}`}
+                      className="absolute"
+                      style={{ left, top }}
+                    >
+                      <div className={`h-3.5 w-3.5 rounded-full border-2 border-white ${color} shadow-md`} />
+                      <span className="mt-1 block rounded bg-card/90 px-1.5 py-0.5 text-[11px] font-medium text-foreground shadow-sm">
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="absolute bottom-4 left-4 rounded-md border border-border bg-card/90 p-3 shadow-lg">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-foreground">
+                      <MapPin className="h-3.5 w-3.5 text-primary" />
+                      Field summary
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 text-center">
+                      {stats.map((stat) => (
+                        <div key={stat.label}>
+                          <div className="text-sm font-semibold text-foreground">{stat.value}</div>
+                          <div className="text-[10px] text-muted-foreground">{stat.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Environmental Impact Through Data</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every tree tells a story of environmental contribution, community value, and ecological balance.
-            </p>
+        <section id="overview" className="border-y border-border bg-card/45 px-4 py-12 sm:px-6 lg:px-8">
+          <div className="container mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+            {stats.map((stat) => (
+              <div key={stat.label} className="rounded-lg border border-border bg-background px-5 py-4">
+                <div className="text-3xl font-semibold text-foreground">{stat.value}</div>
+                <div className="mt-1 text-sm font-medium text-muted-foreground">{stat.label}</div>
+              </div>
+            ))}
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-border">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"
-                    />
-                  </svg>
-                </div>
-                <CardTitle className="text-xl font-semibold">Carbon Sequestration</CardTitle>
-                <CardDescription>
-                  Quantify CO₂ removal capacity using species-specific carbon fixation rates for climate planning.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+        <section className="px-4 py-16 sm:px-6 lg:px-8">
+          <div className="container mx-auto max-w-7xl">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl font-semibold tracking-normal text-foreground">Built for scanning, not scrolling.</h2>
+              <p className="mt-3 text-muted-foreground">
+                The app keeps the map, reporting flow, and environmental context close together so you can move from
+                observation to action quickly.
+              </p>
+            </div>
 
-            <Card className="border-border">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {features.map((feature) => (
+                <div key={feature.title} className="rounded-lg border border-border bg-card p-5 shadow-sm shadow-foreground/5">
+                  <feature.icon className="h-5 w-5 text-primary" />
+                  <h3 className="mt-5 text-lg font-semibold text-foreground">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.description}</p>
                 </div>
-                <CardTitle className="text-xl font-semibold">Educational Resource</CardTitle>
-                <CardDescription>
-                  Living laboratory for biology and environmental science courses, supporting teachers and researchers.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-border">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <CardTitle className="text-xl font-semibold">Community Engagement</CardTitle>
-                <CardDescription>
-                  Connect residents with their environment, enabling participation in community greening initiatives.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-primary/5">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">Ready to Explore Nature's Data?</h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join our community of environmental stewards and discover the hidden stories in every tree.
-          </p>
-          <Link href="/map">
-            <Button size="lg" className="text-base font-medium cursor-pointer">
-              Start Exploring
-            </Button>
-          </Link>
-        </div>
-      </section>
+        </section>
+      </main>
     </div>
   )
 }

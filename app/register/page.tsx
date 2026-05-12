@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Leaf } from "lucide-react"
+import { ArrowLeft, Leaf } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 
 export default function RegisterPage() {
@@ -66,22 +66,37 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto grid min-h-screen max-w-6xl items-center gap-10 px-4 py-8 lg:grid-cols-[0.9fr_1fr] lg:px-8">
+        <div className="hidden lg:block">
+          <Link href="/" className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+          <div className="max-w-md">
+            <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Leaf className="h-5 w-5" />
             </div>
-            <span className="text-2xl font-bold text-foreground">SoCal Trees</span>
+            <h1 className="text-4xl font-semibold leading-tight text-foreground">Help keep the local map honest.</h1>
+            <p className="mt-4 leading-7 text-muted-foreground">
+              Create an account to report dead plant material and keep contributions attached to a real profile.
+            </p>
           </div>
         </div>
 
-        <Card className="border-border shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-foreground">Create account</CardTitle>
-            <CardDescription className="text-center text-muted-foreground">
-              Join our community of tree mappers and environmental advocates
+        <div className="mx-auto w-full max-w-md">
+          <Link href="/" className="mb-8 flex items-center gap-3 lg:hidden">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Leaf className="h-5 w-5" />
+            </div>
+            <span className="text-lg font-semibold text-foreground">SoCal Trees</span>
+          </Link>
+
+        <Card className="border-border/90 shadow-xl shadow-foreground/5">
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-2xl font-semibold text-foreground">Create account</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Join the mapping crew and start contributing field reports
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -103,7 +118,6 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="bg-input border-border focus:ring-ring"
                 />
               </div>
 
@@ -118,7 +132,6 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-input border-border focus:ring-ring"
                 />
               </div>
 
@@ -133,7 +146,6 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-input border-border focus:ring-ring"
                 />
               </div>
 
@@ -148,13 +160,12 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="bg-input border-border focus:ring-ring"
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating account..." : "Create account"}
@@ -171,6 +182,7 @@ export default function RegisterPage() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   )

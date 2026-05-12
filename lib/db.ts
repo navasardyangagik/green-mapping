@@ -1,4 +1,4 @@
-import clientPromise from "./mongodb"
+import getClientPromise from "./mongodb"
 import type { Db } from "mongodb"
 
 let cachedDb: Db | null = null
@@ -9,7 +9,7 @@ export async function connectToDatabase() {
   }
 
   try {
-    const client = await clientPromise
+    const client = await getClientPromise()
     const db = client.db(process.env.MONGODB_DB_NAME || "plant-mapping")
 
     cachedDb = db

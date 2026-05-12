@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 import {
@@ -10,45 +11,59 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, LogOut, Leaf } from "lucide-react"
+import { LayoutDashboard, Leaf, LogOut, Map, User } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const { user, logout, isLoading } = useAuth()
+  const pathname = usePathname()
+
+  const navItems = [
+    { href: "/map", label: "Map" },
+    { href: "/#overview", label: "Overview" },
+  ]
 
   return (
-    <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 border-b border-border/80 bg-background/88 backdrop-blur-xl supports-[backdrop-filter]:bg-background/75">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo and brand */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
+        <div className="flex h-16 items-center justify-between gap-4">
+          <Link href="/" className="flex min-w-0 items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm shadow-primary/15">
+              <Leaf className="h-5 w-5" />
             </div>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">SoCal Trees</h1>
-              <p className="text-xs text-muted-foreground">Tree Map</p>
+            <div className="min-w-0">
+              <h1 className="truncate text-base font-semibold leading-tight text-foreground">SoCal Trees</h1>
+              <p className="hidden text-xs leading-tight text-muted-foreground sm:block">Glendale plant map</p>
             </div>
           </Link>
 
-          {/* Navigation links */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="/map" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-              Explore Map
-            </a>
-            <a href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              About
-            </a>
+          <div className="hidden items-center rounded-md border border-border/80 bg-card/70 p-1 md:flex">
+            {navItems.map((item) => {
+              const isActive = item.href === "/map" ? pathname === "/map" : pathname === "/" && item.href.includes("#")
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "rounded-sm px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+                    isActive && "bg-secondary text-foreground",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-2">
             {isLoading ? (
-              <div className="w-20 h-8 bg-muted animate-pulse rounded"></div>
+              <div className="h-9 w-24 animate-pulse rounded-md bg-muted" />
             ) : user ? (
-              // Authenticated user dropdown
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="w-4 h-4" />
+                  <Button variant="outline" size="sm" className="max-w-[180px]">
+                    <User className="h-4 w-4" />
                     <span className="hidden sm:inline">{user.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -60,24 +75,28 @@ export function Navbar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard">
-                      <User className="w-4 h-4 mr-2" /> Dashboard
+                      <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/map">
+                      <Map className="mr-2 h-4 w-4" /> Map
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-destructive">
-                    <LogOut className="w-4 h-4 mr-2" />
+                    <LogOut className="mr-2 h-4 w-4" />
                     Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              // Guest user buttons
               <>
-                <Button variant="ghost" size="sm" className="text-sm font-medium" asChild>
+                <Button variant="ghost" size="sm" asChild>
                   <Link href="/login">Log in</Link>
                 </Button>
-                <Button size="sm" className="text-sm font-medium" asChild>
-                  <Link href="/register">Register</Link>
+                <Button size="sm" asChild>
+                  <Link href="/register">Sign up</Link>
                 </Button>
               </>
             )}

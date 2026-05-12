@@ -6,6 +6,7 @@
 # next.js build output
 /.next
 /out
+tsconfig.tsbuildinfo
 
 # production build
 /build
@@ -33,4 +34,3 @@ pnpm-debug.log*
 .vscode/
 .idea/
 *.swp
-

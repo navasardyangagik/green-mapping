@@ -1,39 +1,39 @@
 import { MongoClient, type MongoClientOptions } from "mongodb"
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your MongoDB URI to .env.local")
-}
-
-const uri = process.env.MONGODB_URI
 const options: MongoClientOptions = {
-  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
   maxPoolSize: 10,
   retryWrites: true,
   w: "majority",
 }
 
-let client: MongoClient
-let clientPromise: Promise<MongoClient>
+let clientPromise: Promise<MongoClient> | undefined
 
-if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  const globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>
+export default function getClientPromise() {
+  if (!process.env.MONGODB_URI) {
+    throw new Error("Please add your MongoDB URI to .env.local")
   }
 
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options)
-    globalWithMongo._mongoClientPromise = client.connect()
+  if (clientPromise) {
+    return clientPromise
   }
-  clientPromise = globalWithMongo._mongoClientPromise
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options)
-  clientPromise = client.connect()
+
+  if (process.env.NODE_ENV === "development") {
+    const globalWithMongo = global as typeof globalThis & {
+      _mongoClientPromise?: Promise<MongoClient>
+    }
+
+    if (!globalWithMongo._mongoClientPromise) {
+      const client = new MongoClient(process.env.MONGODB_URI, options)
+      globalWithMongo._mongoClientPromise = client.connect()
+    }
+
+    clientPromise = globalWithMongo._mongoClientPromise
+  } else {
+    const client = new MongoClient(process.env.MONGODB_URI, options)
+    clientPromise = client.connect()
+  }
+
+  return clientPromise
 }
-
-// Export a module-scoped MongoClient promise. By doing this in a
-// separate module, the client can be shared across functions.
-export default clientPromise

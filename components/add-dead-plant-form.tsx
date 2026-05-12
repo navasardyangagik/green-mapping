@@ -2,13 +2,13 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X, MapPin } from "lucide-react"
+import { MapPin, X } from "lucide-react"
 
 interface AddDeadPlantFormProps {
   isOpen: boolean
@@ -41,9 +41,9 @@ export function AddDeadPlantForm({
     condition: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
 
-  // Update coordinates when initialCoordinates change
-  useState(() => {
+  useEffect(() => {
     if (initialCoordinates) {
       setFormData((prev) => ({
         ...prev,
@@ -51,12 +51,13 @@ export function AddDeadPlantForm({
         longitude: initialCoordinates.lng,
       }))
     }
-  })
+  }, [initialCoordinates])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.type || !formData.description) return
 
+    setError("")
     setIsSubmitting(true)
     try {
       await onSubmit(formData)
@@ -71,6 +72,7 @@ export function AddDeadPlantForm({
       onClose()
     } catch (error) {
       console.error("Error submitting form:", error)
+      setError(error instanceof Error ? error.message : "Unable to save this report. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -79,19 +81,39 @@ export function AddDeadPlantForm({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-card rounded-lg border border-border w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-semibold">Add Dead Plant Matter</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-4 h-4" />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-foreground/35 p-4 backdrop-blur-sm">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dead-plant-title"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-border bg-card shadow-2xl shadow-foreground/20"
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-border p-5">
+          <div>
+            <h2 id="dead-plant-title" className="text-lg font-semibold text-foreground">
+              Report dead plant material
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Pin the location and add enough detail for someone to verify it later.
+            </p>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close report form">
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5 p-5">
+          {error && (
+            <div className="rounded-md border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
-            <Label>Location</Label>
-            <div className="flex gap-2">
+            <div className="flex items-center justify-between gap-3">
+              <Label>Location</Label>
+              <span className="text-xs text-muted-foreground">Glendale default unless changed</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
               <div className="flex-1">
                 <Label htmlFor="latitude" className="text-xs text-muted-foreground">
                   Latitude
@@ -126,17 +148,16 @@ export function AddDeadPlantForm({
             <Button
               type="button"
               variant={isMapClickMode ? "default" : "outline"}
-              size="sm"
               onClick={onMapClick}
               className="w-full"
             >
-              <MapPin className="w-4 h-4 mr-2" />
-              {isMapClickMode ? "Click on map to set location" : "Click on map to select location"}
+              <MapPin className="h-4 w-4" />
+              Pick location on map
             </Button>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Type of Dead Plant Matter *</Label>
+            <Label htmlFor="type">Type *</Label>
             <Select value={formData.type} onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Select type" />
@@ -179,12 +200,12 @@ export function AddDeadPlantForm({
               id="description"
               value={formData.description}
               onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-              placeholder="Describe the dead plant matter, its size, location details, etc."
+              placeholder="Size, nearby landmark, visible risk, or anything that helps someone confirm it."
               rows={3}
             />
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="grid gap-2 pt-1 sm:grid-cols-2">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1 bg-transparent">
               Cancel
             </Button>

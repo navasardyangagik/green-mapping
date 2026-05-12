@@ -1,13 +1,16 @@
-import { MongoClient, type Db, type Collection } from "mongodb"
-
-const uri = process.env.MONGODB_URI!
-const client = new MongoClient(uri)
+import { MongoClient, ObjectId, type Db, type Collection } from "mongodb"
 
 let db: Db
 let treesCollection: Collection
+let client: MongoClient | undefined
 
 async function connectToDatabase() {
   if (!db) {
+    if (!process.env.MONGODB_URI) {
+      throw new Error("Please add your MongoDB URI to .env.local")
+    }
+
+    client = client || new MongoClient(process.env.MONGODB_URI)
     await client.connect()
     db = client.db("glendale_trees")
     treesCollection = db.collection("trees")
@@ -66,6 +69,6 @@ export async function getTreesByCondition(condition: string) {
 export async function deleteTree(id: string) {
   const { treesCollection } = await connectToDatabase()
 
-  const result = await treesCollection.deleteOne({ _id: id })
+  const result = await treesCollection.deleteOne({ _id: new ObjectId(id) })
   return result.deletedCount > 0
 }
