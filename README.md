@@ -1,4 +1,4 @@
-### Our Green City (Jewel City Hacks 2.0 Best Software Winner)
+# Our Green City (Jewel City Hacks 2.0 Best Software Winner)
 
 ## The Goal
 Our projects goal was to help out the city in identifying high risk fire areas. Based on things like tree density, dead plant matter, and other algorithmic calculations, our goal was to assess fire risk to prevent them before they happen.
